@@ -27,6 +27,9 @@ População Alvo: Todos os consumidores da OLIST (sem acesso)
 <img src="https://i.imgur.com/HRhd2Y0.png" alt="" width="680">
 
 Desenvolvido em conjunto por:
+
 Davi Augusto >> https://github.com/davi-dokasi
+
 Diogo Vieri >> https://github.com/DiogoVBol
+
 João Arend >> https://github.com/arend239
