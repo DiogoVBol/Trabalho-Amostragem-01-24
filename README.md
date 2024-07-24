@@ -24,12 +24,14 @@ A ideia é estimar: Qual a média do valor de venda de produtos por estado do br
 População de Pesquisa: Consumidores da OLIST de 2016 a 2018
 População Alvo: Todos os consumidores da OLIST (sem acesso)
 
+banco de dados pode ser acessado em [Data](https://drive.google.com/file/d/1YEohXFk7zSajy3Nitzi_svDnu9x4ZFn8/view?pli=1)
+
 <img src="https://i.imgur.com/HRhd2Y0.png" alt="" width="680">
 
 Desenvolvido em conjunto por:
 
-Davi Augusto >> https://github.com/davi-dokasi
+[Davi Augusto](https://github.com/davi-dokasi)
 
-Diogo Vieri >> https://github.com/DiogoVBol
+[Diogo Vieri](https://github.com/DiogoVBol)
 
-João Arend >> https://github.com/arend239
+[João Arend](https://github.com/arend239)
