@@ -1,35 +1,30 @@
 # Trabalho MAT2025 - Amostragem 1 2024/1
 ##
 
-*Objetivo geral:* Formular um objetivo de pesquisa para estimar um parâmetro desconhecido.
+*Objetivo geral:* Estimar a média de artigos publicados pelos professores em atividade do Departamento de Estatística da UFRGS.
 Todos os requisitos que norteiam a avaliação e desenvolvimento desse repositório podem ser encontrados na pasta de requisitos.
 
 ### Contexto escolhido:
 
 '''
-INSERIR DESCRIÇÃO DO BANCO DE DADOS ESCOLHIDO
+A tabela de dados foi construída a partir da coleta de informações disponíveis no site da Universidade Federal do Rio Grande do Sul (UFRGS), especificamente na página do [Instituto de Matemática e Estatística (IME)](https://www.ufrgs.br/ime/professores/professores-de-estatistica/) dedicada aos professores de estatística .
+
+Para cada professor listado, acessou-se seu currículo Lattes para verificar a quantidade de artigos completos publicados em periódicos. Com base nessas informações, criou-se um arquivo CSV contendo duas colunas: a primeira com o nome de cada professor e a segunda com o número de artigos publicados.
 '''
 
-*Objetivo de pesquisa:*
+*População Alvo:* Todos os professores de estatística da UFRGS
 
-*População Alvo:*
+*População de Pesquisa:* Professores em atividade do Departamento de Estatística da UFRGS
 
-*População de Pesquisa:*
-
-*Plano amostral:*
-
-Olist é uma startup brasileira que atua no segmento de tecnologia para varejo.
-O conjunto de dados contém informações de 100 mil pedidos de 2016 a 2018 feitos em vários marketplaces no Brasil.
-A ideia é estimar: Qual a média do valor de venda de produtos por estado do brasil?
-População de Pesquisa: Consumidores da OLIST de 2016 a 2018
-População Alvo: Todos os consumidores da OLIST (sem acesso)
-
-<img src="https://i.imgur.com/HRhd2Y0.png" alt="" width="680">
+*Plano amostral:* 
 
 Desenvolvido em conjunto por:
 
-Davi Augusto >> https://github.com/davi-dokasi
+[Davi Augusto](https://github.com/davi-dokasi)
 
-Diogo Vieri >> https://github.com/DiogoVBol
+[Diogo Vieri](https://github.com/DiogoVBol)
 
-João Arend >> https://github.com/arend239
+[João Arend](https://github.com/arend239)
+
+[Gabriel Netto](https://github.com/NettoGabriel)
+

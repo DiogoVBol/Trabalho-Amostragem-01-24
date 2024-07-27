@@ -1,0 +1,113 @@
+---
+title: "Trabalho de Amostragem"
+title-slide-attributes:
+    id: title-slide
+    data-background-image: background.png
+    data-background-size: cover
+author: "Diogo, Davi, João, Gabriel e Giovani"
+format:
+  revealjs: 
+    slide-number: true
+    transition: slide
+    preview-links: true
+    embed-resources: true
+    logo: logo.png
+    css: lecture.css
+    footer: Professor Rogério Boff Borges
+    
+---
+```{r setup, include=FALSE}
+library(tidyverse)
+library(readxl)
+library(grid)
+library(png)
+library(showtext)
+library(knitr)
+library(kableExtra)
+```
+
+```{r dados, include=FALSE}
+df <- read_excel("../data/artigos.xlsx")
+```
+
+## Tabela de dados {background-color="#FFFAFA"}
+
+Primeiras 10 observações da tabela:
+
+```{r tabela de dados}
+
+knitr::kable(head(df, 10)) %>%
+  kable_styling(font_size = 17)
+   
+```
+
+## Resumo dos dados
+
+## Histograma {background-color="#FFFAFA"}
+
+```{r Histograma, warning=FALSE}
+# Fonte para legenda
+font_add_google("Playfair Display", "Playfair")
+showtext_auto()
+
+# Imagens para gráfico
+img <- readPNG("img/img.png")
+img2 <- readPNG("img/img2.png")
+img3 <- readPNG("img/img3.png")
+
+ggplot(df, aes(x = quant_artigos)) +
+  geom_histogram(binwidth = 8, fill = "tomato", color = "black", size = 0.8) +
+  geom_curve(aes(
+      x = 120, y = 1, 
+      xend = 109, yend = 3.5
+    ),
+    curvature = 0.3, 
+    arrow = arrow(length = unit(0.2, "inches")),
+    size = 0.8, 
+  ) +
+  geom_curve(aes(
+    x = 12, y = 9.7, 
+    xend = 25, yend = 8
+  ),
+  curvature = 0.4, 
+  arrow = arrow(length = unit(0.2, "inches")),
+  size = 0.8, 
+  ) +
+  geom_curve(aes(
+    x = 80, y = 2, 
+    xend = 90, yend = 7.5
+  ),
+  curvature = -0.4, 
+  arrow = arrow(length = unit(0.2, "inches")),
+  size = 0.8, 
+  ) +
+  labs(x = 'Quantidade de artigos publicados',
+       y = 'Frequência',
+       title = 'Quantidade de artigos publicados por professor',
+       subtitle = "Quantidade de Artigos completos publicados em periódicos por\nprofessores do departamento de estatística da UFRGS") + 
+  annotation_raster(img, xmin = 86, xmax = 111, ymin = 2.5, ymax = 5) +
+  annotation_raster(img2, xmin = 91, xmax = 105, ymin = 7.5, ymax = 10) +
+  annotation_raster(img3, xmin = 107, xmax = 120, ymin = 7.5, ymax = 10) +
+  annotate(geom= 'text', label = "Suzi Alves Camey\ntem 120 artigos publicados", x = 98.2, y = 5.5, family = "Playfair", size = 6, lineheight = 0.5) +
+  annotate(geom= 'text', label = "41% dos pesquisadores tem\nentre 4 a 12 artigos publicados", x = 37, y = 8, family = "Playfair", size = 6, lineheight = 0.5) +
+  annotate(geom= 'text', label = "Patrícia Ziegelmann e Álvaro Vigo são o 2.º e o 3.º\ncom maior quantidade de publicações", x = 105, y = 10.5, family = "Playfair", size = 6, lineheight = 0.5) +
+  theme(panel.grid = element_blank(),
+        panel.grid.minor = element_blank(),
+        plot.background = element_rect(fill = '#FFFAFA'),
+        panel.background = element_rect(fill = '#FFFAFA'),
+        plot.title = element_text(family = "Playfair",size = 30, hjust = 0.5),
+        plot.subtitle = element_text(family = "Playfair",size = 20, hjust = 0.5,lineheight = 0.5),
+        axis.text = element_text(size = 15),
+        axis.title.x = element_text(family = "Playfair", size = 17),
+        axis.title.y = element_text(family = "Playfair", size = 17))
+
+```
+
+## População alvo vs População de pesquisa {background-color="#FFFAFA"}
+
+## Plano amostral {background-color="#FFFAFA"}
+
+## Estimação de parâmetro {background-color="#FFFAFA"}
+
+## Resultados {background-color="#FFFAFA"}
+

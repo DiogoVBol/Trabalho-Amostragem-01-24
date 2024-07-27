@@ -1,0 +1,26 @@
+.v-center-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 90%;
+}
+
+.reveal .slide-logo {
+  height: unset !important;
+  width: unset !important;
+  max-width: 188px !important;
+  max-height: 188px !important;
+}
+
+#title-slide {
+  color: #F0FFFF;
+}
+
+#title-slide h1,
+#title-slide .author {
+  color: #F0FFFF !important;
+}
+
+.reveal .slides section:not(:first-of-type) h2 {
+  color: #8B1A1A !important;
+}
