@@ -1,0 +1,22 @@
+---
+title: "Trabalho de Amostragem"
+output: html_document
+date: "2024-07-27"
+---
+
+```{r setup, include=FALSE}
+library(tidyverse)
+library(readxl)
+```
+
+```{r dados, include=FALSE}
+df <- read_excel("data/artigos.xlsx")
+
+mean(df$quant_artigos) # parâmetro média = 28.10
+```
+
+# Etapas
+
+## Criar amostra conforme plano amostral
+
+## Estimar média e criar intervalo de confiança
