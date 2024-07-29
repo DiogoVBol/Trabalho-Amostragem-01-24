@@ -1,4 +1,4 @@
----
+ ---
 title: "Trabalho de Amostragem"
 title-slide-attributes:
     id: title-slide
@@ -24,6 +24,7 @@ library(png)
 library(showtext)
 library(knitr)
 library(kableExtra)
+library(survey)
 ```
 
 ```{r dados, include=FALSE}
@@ -42,6 +43,24 @@ knitr::kable(head(df, 10)) %>%
 ```
 
 ## Resumo dos dados
+Possuímos um dataframe contendo informações sobre a quatidade de artigos publicados de 29 professores do departamento de  Estatística na UFRGS
+
+```{r info dos dados1}
+nrow(df)
+```
+
+Somando a quantidade de artigos destes professores temos 815 artigos publicados no total.
+
+```{r info dos dados2}
+sum(df$quant_artigos)
+```
+
+Claro, sabemos que muitos desses professores podem não ter atualizado seu lattes, sendo assim na realidade ter mais artigos públicados, um exemplo é o professor João Henrique Ferreira Flores, que fez doutorado, no qual é obrigatório ao menos dois artigos públicados durante o período para concluir, mas no dataframe possui apenas 1 artigo.
+
+```{r info dos dados3}
+df$nome[df$quant_artigos == 1]
+```
+
 
 ## Histograma {background-color="#FFFAFA"}
 
@@ -107,7 +126,59 @@ ggplot(df, aes(x = quant_artigos)) +
 
 ## Plano amostral {background-color="#FFFAFA"}
 
+**OBS** **Este é um texto exemplo para ser preenchido, onde eu grifei de negrito os principais tópicos que definem o plano amostral, para utilziarmos de guia conforme nosso estudo/trabalho**
+
+Aqui vamos detalhar nosso **Objetivo de Estudo**: --escrever aqui --
+
+Com a nossa **população alvo**: Sendo os professores do departamento de estatística da UFGRS
+
+Nesta pesquisa vamos utilizar o **método de amostragem** AASs (provavelmente vamos utilizar este, pois em uma conversa com Diogo lembramos o sor ter comentado quando a população é pequena é melhor utilizar processo sem reposição), utilizando o **tamanho da amostra n** (À definir)
+
+O procedimento de **coleta de dados** foi feito a partir do curricúlo lattes dos professores do departamento.
+
+Os métodos e ferramentas utilizados para a **análise de dados** que utilizamos foram -- escrever -- 
+
 ## Estimação de parâmetro {background-color="#FFFAFA"}
+```{r}
+# Informações básicas do parâmetro
+
+N <- nrow(df) # População do dataframe
+n <- 5 # Queria fazer com n = 18 mas meu PC não roda as combinações quando vou fazer.
+total_pop <- N*mean(df$quant_artigos)
+
+# Média e var pop da quantidade de artigos
+mean(df$quant_artigos) # 28.10345
+var(df$quant_artigos)*(N-1)/N # 805.2652 (Muito alta, averiguar dps)
+
+# Como é amostragem AASs setando seed para teste de retirada de amostra única sem reposição
+# Se quiserem retirar blz
+set.seed(338357)
+
+# Cria amostra sem reposição das linhas do dataframe, e então cria um dataframe da amostra
+aass_amostra <- sample(x = seq_len(nrow(df)), size = n, replace = FALSE)
+df_amostra <- df[aass_amostra, ]
+df_amostra$N <- N
+
+# Vou fazer o cálculo utilizando o pacote Survey 
+plano_aass <- svydesign(
+  ids = ~ 1,
+  fpc = ~N,
+  data = df_amostra
+
+)
+
+# Estimativa da media e variância populacional
+svymean(
+  x = ~ quant_artigos,
+  design = plano_aass
+)
+
+svyvar(
+  x = ~quant_artigos,
+  design = plano_aass
+)
+```
+
 
 ## Resultados {background-color="#FFFAFA"}
 
