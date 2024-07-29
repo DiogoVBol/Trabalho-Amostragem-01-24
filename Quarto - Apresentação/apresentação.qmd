@@ -143,7 +143,7 @@ Os métodos e ferramentas utilizados para a **análise de dados** que utilizamos
 # Informações básicas do parâmetro
 
 N <- nrow(df) # População do dataframe
-n <- 5 # Queria fazer com n = 18 mas meu PC não roda as combinações quando vou fazer.
+n <- 10 # 
 total_pop <- N*mean(df$quant_artigos)
 
 # Média e var pop da quantidade de artigos
