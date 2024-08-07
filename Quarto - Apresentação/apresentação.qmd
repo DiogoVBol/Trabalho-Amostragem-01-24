@@ -46,9 +46,9 @@ As informações estão disponíveis no site do [IME da UFRGS]("https://www.ufrg
 
 ## Definições
 
-- **População:** Consideramos nossa população como os professores de estatística da UFRS. Portanto temos um censo, já que a população de pesquisa é toda a população alvo. A unidade elementar consiste em cada professor que compõe o departamento.
-- **Característica:**
-- **Parâmetro de interesse:** Número de artigos completos publicados em periódicos.
+- **População:** Consideramos nossa população como os professores de estatística da UFRGS. Portanto temos um censo, já que a população de pesquisa é toda a população alvo. A unidade elementar consiste em cada professor que compõe o departamento.
+- **Característica:** Número de artigos completos publicados em periódicos.
+- **Parâmetro de interesse:** Média do número de artigos completos publicados em periódicos.
 
 ## Tabela de dados
 Primeiras 10 observações da tabela:
@@ -108,8 +108,8 @@ ggplot(df, aes(x = quant_artigos)) +
   annotate(geom= 'text', label = "Patrícia Ziegelmann e Álvaro Vigo são o 2.º e o 3.º\ncom maior quantidade de publicações", x = 105, y = 10.5, family = "Playfair", size = 6, lineheight = 0.5) +
   theme(panel.grid = element_blank(),
         panel.grid.minor = element_blank(),
-        plot.background = element_rect(fill = '#FFFAFA'),
-        panel.background = element_rect(fill = '#FFFAFA'),
+        plot.background = element_rect(fill = NA),
+        panel.background = element_rect(fill = NA),
         plot.title = element_text(family = "Playfair",size = 30, hjust = 0.5),
         plot.subtitle = element_text(family = "Playfair",size = 20, hjust = 0.5,lineheight = 0.5),
         axis.text = element_text(size = 15),
