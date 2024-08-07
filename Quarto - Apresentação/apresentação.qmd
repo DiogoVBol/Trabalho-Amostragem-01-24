@@ -6,17 +6,19 @@ title-slide-attributes:
     data-background-size: cover
 author: "Diogo, Davi, João, Gabriel e Giovani"
 format:
-  revealjs: 
+  revealjs:
     slide-number: true
     transition: slide
     preview-links: true
     embed-resources: true
-    logo: logo.png
+    logo: img/logo.png
     css: lecture.css
     footer: Professor Rogério Boff Borges
-    
+    background: "#FFFAFA"
+
 ---
 ```{r setup, include=FALSE}
+
 library(tidyverse)
 library(readxl)
 library(grid)
@@ -28,29 +30,35 @@ library(survey)
 ```
 
 ```{r dados, include=FALSE}
+
 df <- read_excel("../data/artigos.xlsx")
 ```
 
-## Tabela de dados {background-color="#FFFAFA"}
+## Resumo dos dados
 
+- **Banco de Dados:** Fora coletado o número de "artigos completos publicados em periódicos" de cada professor de estatística da UFRGS 2024/02.
+As informações estão disponíveis no site do [IME da UFRGS]("https://www.ufrgs.br/ime/professores/professores-de-estatistica/") e nos respectivos [currículo Lattes]("https://lattes.cnpq.br/") dos docentes.
+
+- **Observação:** A data de atualização dos currículos varia de acordo com cada professor o que pode nos trazes resultados subestimados.
+
+<!--Muitos professores podem não ter atualizado seu Lattes, resultando em subestimação do número de artigos.
+  - Exemplo: Professor João Henrique Ferreira Flores, com apenas 1 artigo registrado, apesar de ter concluído o doutorado, que exige pelo menos dois artigos. -->
+
+## Definições
+
+- **População:** Consideramos nossa população como os professores de estatística da UFRS. Portanto temos um censo, já que a população de pesquisa é toda a população alvo. A unidade elementar consiste em cada professor que compõe o departamento.
+- **Característica:**
+- **Parâmetro de interesse:** Número de artigos completos publicados em periódicos.
+
+## Tabela de dados
 Primeiras 10 observações da tabela:
-
 ```{r tabela de dados}
 
 knitr::kable(head(df, 10)) %>%
-  kable_styling(font_size = 17)
-   
+  kable_styling(font_size = 20)
 ```
 
-## Resumo dos dados
-- **Dataframe**: Informações sobre a quantidade de artigos registrados por 29 professores do Departamento de Estatística da UFRGS.
-
-- **Total de Artigos**: 815 artigos registrados.
-
-- **Observação**: Muitos professores podem não ter atualizado seu Lattes, resultando em subestimação do número de artigos.
-  - Exemplo: Professor João Henrique Ferreira Flores, com apenas 1 artigo registrado, apesar de ter concluído o doutorado, que exige pelo menos dois artigos.
-
-## Histograma {background-color="#FFFAFA"}
+## Histograma
 
 ```{r Histograma, warning=FALSE}
 # Fonte para legenda
@@ -58,43 +66,43 @@ font_add_google("Playfair Display", "Playfair")
 showtext_auto()
 
 # Imagens para gráfico
-img <- readPNG("img/img.png")
-img2 <- readPNG("img/img2.png")
-img3 <- readPNG("img/img3.png")
+im_suzi <- readPNG("img/foto_suzi.png")
+im_patricia <- readPNG("img/foto_patricia.png")
+im_alvaro <- readPNG("img/foto_alvaro.png")
 
 ggplot(df, aes(x = quant_artigos)) +
   geom_histogram(binwidth = 8, fill = "tomato", color = "black", size = 0.8) +
   geom_curve(aes(
-      x = 120, y = 1, 
+      x = 120, y = 1,
       xend = 109, yend = 3.5
     ),
-    curvature = 0.3, 
+    curvature = 0.3,
     arrow = arrow(length = unit(0.2, "inches")),
-    size = 0.8, 
+    size = 0.8,
   ) +
   geom_curve(aes(
-    x = 12, y = 9.7, 
+    x = 12, y = 9.7,
     xend = 25, yend = 8
   ),
-  curvature = 0.4, 
+  curvature = 0.4,
   arrow = arrow(length = unit(0.2, "inches")),
-  size = 0.8, 
+  size = 0.8,
   ) +
   geom_curve(aes(
-    x = 80, y = 2, 
+    x = 80, y = 2,
     xend = 90, yend = 7.5
   ),
-  curvature = -0.4, 
+  curvature = -0.4,
   arrow = arrow(length = unit(0.2, "inches")),
-  size = 0.8, 
+  size = 0.8,
   ) +
   labs(x = 'Quantidade de artigos publicados',
        y = 'Frequência',
        title = 'Quantidade de artigos publicados por professor',
-       subtitle = "Quantidade de Artigos completos publicados em periódicos por\nprofessores do departamento de estatística da UFRGS") + 
-  annotation_raster(img, xmin = 86, xmax = 111, ymin = 2.5, ymax = 5) +
-  annotation_raster(img2, xmin = 91, xmax = 105, ymin = 7.5, ymax = 10) +
-  annotation_raster(img3, xmin = 107, xmax = 120, ymin = 7.5, ymax = 10) +
+       subtitle = "Quantidade de Artigos completos publicados em periódicos por\nprofessores do departamento de estatística da UFRGS") +
+  annotation_raster(im_suzi, xmin = 86, xmax = 111, ymin = 2.5, ymax = 5) +
+  annotation_raster(im_patricia, xmin = 91, xmax = 105, ymin = 7.5, ymax = 10) +
+  annotation_raster(im_alvaro, xmin = 107, xmax = 120, ymin = 7.5, ymax = 10) +
   annotate(geom= 'text', label = "Suzi Alves Camey\ntem 120 artigos publicados", x = 98.2, y = 5.5, family = "Playfair", size = 6, lineheight = 0.5) +
   annotate(geom= 'text', label = "41% dos pesquisadores tem\nentre 4 a 12 artigos publicados", x = 37, y = 8, family = "Playfair", size = 6, lineheight = 0.5) +
   annotate(geom= 'text', label = "Patrícia Ziegelmann e Álvaro Vigo são o 2.º e o 3.º\ncom maior quantidade de publicações", x = 105, y = 10.5, family = "Playfair", size = 6, lineheight = 0.5) +
@@ -110,9 +118,9 @@ ggplot(df, aes(x = quant_artigos)) +
 
 ```
 
-## População alvo vs População de pesquisa {background-color="#FFFAFA"}
+## População alvo vs População de pesquisa
 
-## Plano amostral {background-color="#FFFAFA"}
+## Plano amostral
 
 - **Objetivo de Estudo**: Analisar o número de artigos registrados utilizando estimadores estatísticos
 
@@ -169,5 +177,5 @@ svyvar(
 ```
 
 
-## Resultados {background-color="#FFFAFA"}
+## Resultados
 
