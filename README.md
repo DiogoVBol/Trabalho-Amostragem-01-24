@@ -28,3 +28,5 @@ Desenvolvido em conjunto por:
 
 [Gabriel Netto](https://github.com/NettoGabriel)
 
+[Giovanni Zini](https://github.com/GioZini)
+
