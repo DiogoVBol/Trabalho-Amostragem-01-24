@@ -25,6 +25,8 @@ library(showtext)
 library(knitr)
 library(kableExtra)
 library(survey)
+library(presize) # utilizado para calculo do n para o experimetno
+
 ```
 
 ```{r dados, include=FALSE}
@@ -123,10 +125,15 @@ ggplot(df, aes(x = quant_artigos)) +
 - **Coleta de dados**: Coletamos os dados do currículo lattes dos professores
 
 ## Estimação de parâmetro {background-color="#FFFAFA".scrollable}
-```{r,Estimacao Parametro0, echo= FALSE}
+
+- Valor de **n**
+```{r,Estimacao Parametro0, echo= TRUE}
 # Informações básicas do parâmetro
+# Estimação do n "correto" para os processos
+presize::prec_mean(mean = 28.10345, sd = 28.879, conf.width = 15*2, conf.level = 90/100) #12
+n <- 12
 N <- nrow(df) # População do dataframe
-n <- 10 # Número retirado da amostra
+# n <- 10 # Número retirado da amostra
 total_pop <- N*mean(df$quant_artigos) # Estima o total populacional!
 ```
  - Valores populacionais
@@ -134,6 +141,7 @@ total_pop <- N*mean(df$quant_artigos) # Estima o total populacional!
 # Média e var pop da quantidade de artigos
 mean(df$quant_artigos) # 28.10345
 var(df$quant_artigos)*(N-1)/N # 805.2652
+sd(df$quant_artigos) # 28.87948
 ```
 ``` {r, Estimacao Parametro2, echo = FALSE}
 set.seed(338357)
