@@ -133,7 +133,6 @@ ggplot(df, aes(x = quant_artigos)) +
 presize::prec_mean(mean = 28.10345, sd = 28.879, conf.width = 15*2, conf.level = 90/100) #12
 n <- 12
 N <- nrow(df) # População do dataframe
-# n <- 10 # Número retirado da amostra
 total_pop <- N*mean(df$quant_artigos) # Estima o total populacional!
 ```
  - Valores populacionais
