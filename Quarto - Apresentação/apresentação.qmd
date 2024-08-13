@@ -126,7 +126,7 @@ ggplot(df, aes(x = quant_artigos)) +
 - **População alvo**: Professores do dep. de estatística da UFRGS no semestre 2024/01;
 - **Coleta de dados**: Os dados são públicos e foram coletados pelo grupo através do Currículo Lattes de cada professor.
 
-## Estimação de parâmetro {background-color="#FFFAFA".scrollable}
+## Estimando parâmetros {background-color="#FFFAFA".scrollable}
 ```{r,Estimacao Parametro0, include = FALSE}
 # Informações básicas do parâmetro
 N <- nrow(df)
@@ -134,15 +134,18 @@ n <- 10
 total_pop <- N*mean(df$quant_artigos) # Estima o total populacional!
 ```
 
-Valores populacionais
-```{r, Estimacao Parametro1, include = FALSE}
+### Valores populacionais
+
+```{r, pop_param, include = FALSE}
 
 media_pop <- mean(df$quant_artigos)
 var_pop   <- var(df$quant_artigos)*(N-1)/N
 ```
+
 - $\mu$  = `r media_pop`
 - $\sigma^2$ = `r var_pop`
 
+::: {.panel-tabset}
 ``` {r, Estimacao Parametro2, echo = FALSE}
 set.seed(338357)
 # Cria amostra sem reposição das linhas do dataframe, e então cria um dataframe da amostra
@@ -159,7 +162,8 @@ plano_aass <- svydesign(
 )
 ```
 
-- Estimador da média
+Estimador da média
+
 ```{r, Estimacao Parametro3, echo = TRUE}
 # Estimativa da Média
 svymean(
