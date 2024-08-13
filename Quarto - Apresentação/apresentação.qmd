@@ -4,7 +4,7 @@ title-slide-attributes:
     id: title-slide
     data-background-image: background.png
     data-background-size: cover
-author: "Diogo, Davi, João, Gabriel e Giovani"
+author: "Diogo, Davi, Gabriel, Giovani, João"
 format:
   revealjs:
     slide-number: true
@@ -18,6 +18,7 @@ format:
 
 ---
 ```{r setup, include=FALSE}
+# documentação do quarto: https://quarto.org/docs/presentations/revealjs/
 
 library(tidyverse)
 library(readxl)
@@ -41,9 +42,6 @@ As informações estão disponíveis no site do [IME da UFRGS]("https://www.ufrg
 
 - **Observação:** A data de atualização dos currículos varia de acordo com cada professor o que pode nos trazes resultados subestimados.
 
-<!--Muitos professores podem não ter atualizado seu Lattes, resultando em subestimação do número de artigos.
-  - Exemplo: Professor João Henrique Ferreira Flores, com apenas 1 artigo registrado, apesar de ter concluído o doutorado, que exige pelo menos dois artigos. -->
-
 ## Definições
 
 - **População:** Consideramos nossa população como os professores de estatística da UFRGS. Portanto temos um censo, já que a população de pesquisa é toda a população alvo. A unidade elementar consiste em cada professor que compõe o departamento.
@@ -54,11 +52,15 @@ As informações estão disponíveis no site do [IME da UFRGS]("https://www.ufrg
 Primeiras 10 observações da tabela:
 ```{r tabela de dados}
 
-knitr::kable(head(df, 10)) %>%
-  kable_styling(font_size = 20)
+knitr::kable(head(df, 10),
+  col.names = c("Nome", "Quant. Artigos"),
+  align = "lr"
+) %>%
+  kable_styling(font_size = 23)
 ```
 
 ## Histograma
+<span class="small-text"> Quantidade de artigos publicados por professor: </span>
 
 ```{r Histograma, warning=FALSE}
 # Fonte para legenda
@@ -97,24 +99,22 @@ ggplot(df, aes(x = quant_artigos)) +
   size = 0.8,
   ) +
   labs(x = 'Quantidade de artigos publicados',
-       y = 'Frequência',
-       title = 'Quantidade de artigos publicados por professor',
-       subtitle = "Quantidade de Artigos completos publicados em periódicos por\nprofessores do departamento de estatística da UFRGS") +
+       y = 'Frequência') +
   annotation_raster(im_suzi, xmin = 86, xmax = 111, ymin = 2.5, ymax = 5) +
   annotation_raster(im_patricia, xmin = 91, xmax = 105, ymin = 7.5, ymax = 10) +
   annotation_raster(im_alvaro, xmin = 107, xmax = 120, ymin = 7.5, ymax = 10) +
-  annotate(geom= 'text', label = "Suzi Alves Camey\ntem 120 artigos publicados", x = 98.2, y = 5.5, family = "Playfair", size = 6, lineheight = 0.5) +
-  annotate(geom= 'text', label = "41% dos pesquisadores tem\nentre 4 a 12 artigos publicados", x = 37, y = 8, family = "Playfair", size = 6, lineheight = 0.5) +
-  annotate(geom= 'text', label = "Patrícia Ziegelmann e Álvaro Vigo são o 2.º e o 3.º\ncom maior quantidade de publicações", x = 105, y = 10.5, family = "Playfair", size = 6, lineheight = 0.5) +
+  annotate(geom= 'text', label = "Suzi Alves Camey\ntem 120 artigos publicados", x = 98.2, y = 5.5,  size = 8, lineheight = 0.5) +
+  annotate(geom= 'text', label = "41% dos pesquisadores tem\nentre 4 a 12 artigos publicados", x = 41, y = 8,  size = 8, lineheight = 0.5) +
+  annotate(geom= 'text', label = "Patrícia Ziegelmann e Álvaro Vigo são o 2° e o 3°\ncom maior quantidade de publicações", x = 105, y = 10.5,  size = 8, lineheight = 0.5) +
   theme(panel.grid = element_blank(),
         panel.grid.minor = element_blank(),
         plot.background = element_rect(fill = NA),
         panel.background = element_rect(fill = NA),
-        plot.title = element_text(family = "Playfair",size = 30, hjust = 0.5),
-        plot.subtitle = element_text(family = "Playfair",size = 20, hjust = 0.5,lineheight = 0.5),
+        plot.title = element_text(size = 30, hjust = 0.5),
+        plot.subtitle = element_text(size = 20, hjust = 0.5,lineheight = 0.5),
         axis.text = element_text(size = 15),
-        axis.title.x = element_text(family = "Playfair", size = 17),
-        axis.title.y = element_text(family = "Playfair", size = 17))
+        axis.title.x = element_text( size = 20),
+        axis.title.y = element_text( size = 20))
 
 ```
 
@@ -122,27 +122,27 @@ ggplot(df, aes(x = quant_artigos)) +
 
 ## Plano amostral
 
-- **Objetivo de Estudo**: Analisar o número de artigos registrados utilizando estimadores estatísticos
-
-- **População alvo**: Professores do dep de Estatística da UFRGS no ano de 2024
-
-- **Método de amostragem**: Estamos utilizando Amostragem Aleatória Simples sem reposição
-
-- **Coleta de dados**: Coletamos os dados do currículo lattes dos professores
+- **Objetivo de Estudo**: Analisar o número de artigos completos publicados em periódicos utilizando estimadores estatísticos;
+- **População alvo**: Professores do dep. de estatística da UFRGS no semestre 2024/01;
+- **Coleta de dados**: Os dados são públicos e foram coletados pelo grupo através do Currículo Lattes de cada professor.
 
 ## Estimação de parâmetro {background-color="#FFFAFA".scrollable}
-```{r,Estimacao Parametro0, echo= FALSE}
+```{r,Estimacao Parametro0, include = FALSE}
 # Informações básicas do parâmetro
-N <- nrow(df) # População do dataframe
-n <- 10 # Número retirado da amostra
+N <- nrow(df)
+n <- 10
 total_pop <- N*mean(df$quant_artigos) # Estima o total populacional!
 ```
- - Valores populacionais
-```{r, Estimacao Parametro1, echo = TRUE}
-# Média e var pop da quantidade de artigos
-mean(df$quant_artigos) # 28.10345
-var(df$quant_artigos)*(N-1)/N # 805.2652
+
+Valores populacionais
+```{r, Estimacao Parametro1, include = FALSE}
+
+media_pop <- mean(df$quant_artigos)
+var_pop   <- var(df$quant_artigos)*(N-1)/N
 ```
+- $\mu$  = `r media_pop`
+- $\sigma^2$ = `r var_pop`
+
 ``` {r, Estimacao Parametro2, echo = FALSE}
 set.seed(338357)
 # Cria amostra sem reposição das linhas do dataframe, e então cria um dataframe da amostra
@@ -158,6 +158,7 @@ plano_aass <- svydesign(
 
 )
 ```
+
 - Estimador da média
 ```{r, Estimacao Parametro3, echo = TRUE}
 # Estimativa da Média
