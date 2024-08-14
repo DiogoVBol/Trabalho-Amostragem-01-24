@@ -4,7 +4,7 @@ title-slide-attributes:
     id: title-slide
     data-background-image: background.png
     data-background-size: cover
-author: "Diogo, Davi, Gabriel, Giovani, João"
+author: "Diogo, Davi, Gabriel, Giovanni, João"
 format:
   revealjs:
     slide-number: true
@@ -30,7 +30,7 @@ library(kableExtra)
 library(survey)
 ```
 
-```{r dados, include=FALSE}
+```{r data, include=FALSE}
 
 df <- read_excel("../data/artigos.xlsx")
 ```
@@ -50,7 +50,7 @@ As informações estão disponíveis no site do [IME da UFRGS]("https://www.ufrg
 
 ## Tabela de dados
 Primeiras 10 observações da tabela:
-```{r tabela de dados}
+```{r table_head}
 
 knitr::kable(head(df, 10),
   col.names = c("Nome", "Quant. Artigos"),
@@ -62,15 +62,13 @@ knitr::kable(head(df, 10),
 ## Histograma
 <span class="small-text"> Quantidade de artigos publicados por professor: </span>
 
-```{r Histograma, warning=FALSE}
-# Fonte para legenda
-font_add_google("Playfair Display", "Playfair")
+```{r hist, warning=FALSE}
+
 showtext_auto()
 
-# Imagens para gráfico
-im_suzi <- readPNG("img/foto_suzi.png")
+im_suzi     <- readPNG("img/foto_suzi.png")
 im_patricia <- readPNG("img/foto_patricia.png")
-im_alvaro <- readPNG("img/foto_alvaro.png")
+im_alvaro   <- readPNG("img/foto_alvaro.png")
 
 ggplot(df, aes(x = quant_artigos)) +
   geom_histogram(binwidth = 8, fill = "tomato", color = "black", size = 0.8) +
@@ -127,26 +125,28 @@ ggplot(df, aes(x = quant_artigos)) +
 - **Coleta de dados**: Os dados são públicos e foram coletados pelo grupo através do Currículo Lattes de cada professor.
 
 ## Estimando parâmetros {background-color="#FFFAFA".scrollable}
-```{r,Estimacao Parametro0, include = FALSE}
-# Informações básicas do parâmetro
-N <- nrow(df)
-n <- 10
-total_pop <- N*mean(df$quant_artigos) # Estima o total populacional!
-```
-
 ### Valores populacionais
 
-```{r, pop_param, include = FALSE}
-
+```{r pop_param, include = FALSE}
+N         <- nrow(df)
 media_pop <- mean(df$quant_artigos)
 var_pop   <- var(df$quant_artigos)*(N-1)/N
 ```
 
-- $\mu$  = `r media_pop`
-- $\sigma^2$ = `r var_pop`
+::: columns
+::: {.column width="37%"}
+  $\mu$  = `r media_pop`
+:::
 
-::: {.panel-tabset}
+::: {.column width="63%"}
+$\sigma^2$ = `r var_pop`
+:::
+:::
+
 ``` {r, Estimacao Parametro2, echo = FALSE}
+n         <- 10
+total_pop <- N*mean(df$quant_artigos)
+
 set.seed(338357)
 # Cria amostra sem reposição das linhas do dataframe, e então cria um dataframe da amostra
 aass_amostra <- sample(x = seq_len(nrow(df)), size = n, replace = FALSE)
@@ -158,29 +158,31 @@ plano_aass <- svydesign(
   ids = ~ 1,
   fpc = ~N,
   data = df_amostra
-
 )
 ```
 
-Estimador da média
+::: {.panel-tabset}
 
-```{r, Estimacao Parametro3, echo = TRUE}
-# Estimativa da Média
+### Estimador da média
+
+```{r, est_media, echo = TRUE}
+
 svymean(
   x = ~ quant_artigos,
   design = plano_aass
 )
 ```
 
-- Estimador da Variância
-```{r, Estimacao Parametro4, echo = TRUE}
-# Estimativa da Variância populacional
+### Estimador da Variância
+```{r, est_var, echo = TRUE}
+
 svyvar(
   x = ~quant_artigos,
   design = plano_aass
 )
 ```
 
+:::
 
 ## Resultados
 
