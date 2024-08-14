@@ -1,5 +1,4 @@
 # Trabalho MAT2025 - Amostragem 1 2024/1
-##
 
 *Objetivo geral:* Estimar a média de artigos publicados pelos professores em atividade do Departamento de Estatística da UFRGS.
 Todos os requisitos que norteiam a avaliação e desenvolvimento desse repositório podem ser encontrados na pasta de requisitos.
@@ -16,7 +15,7 @@ Para cada professor listado, acessou-se seu currículo Lattes para verificar a q
 
 *População de Pesquisa:* Professores em atividade do Departamento de Estatística da UFRGS
 
-*Plano amostral:* 
+*Plano amostral:*
 
 Desenvolvido em conjunto por:
 
@@ -28,3 +27,4 @@ Desenvolvido em conjunto por:
 
 [Gabriel Netto](https://github.com/NettoGabriel)
 
+[Giovanni Zini](https://github.com/GioZini)
