@@ -15,8 +15,8 @@ format:
     css: lecture.css
     footer: Professor Rogério Boff Borges
     background: "#FFFAFA"
-
 ---
+
 ```{r setup, include=FALSE}
 # documentação do quarto: https://quarto.org/docs/presentations/revealjs/
 
@@ -28,11 +28,14 @@ library(showtext)
 library(knitr)
 library(kableExtra)
 library(survey)
+library(presize)
 ```
 
 ```{r data, include=FALSE}
 
 df <- read_excel("../data/artigos.xlsx")
+
+sd(df$quant_artigos)
 ```
 
 ## Resumo dos dados
@@ -42,9 +45,14 @@ As informações estão disponíveis no site do [IME da UFRGS]("https://www.ufrg
 
 - **Observação:** A data de atualização dos currículos varia de acordo com cada professor o que pode nos trazes resultados subestimados.
 
+## População Alvo vs População de Pesquisa
+
+- **População Alvo:** São todos os professores de Estatística da UFRGS, independentemente do semestre ou de outros critérios temporais.
+- **População de Pesquisa:** Refere-se aos professores do Departamento de Estatística da UFRGS no segundo semestre de 2024.
+
 ## Definições
 
-- **População:** Consideramos nossa população como os professores de estatística da UFRGS. Portanto temos um censo, já que a população de pesquisa é toda a população alvo. A unidade elementar consiste em cada professor que compõe o departamento.
+- **Unidade Elementar:** Cada professor individual que faz parte do Departamento de Estatística no segundo semestre de 2024.
 - **Característica:** Número de artigos completos publicados em periódicos.
 - **Parâmetro de interesse:** Média do número de artigos completos publicados em periódicos.
 
@@ -116,16 +124,14 @@ ggplot(df, aes(x = quant_artigos)) +
 
 ```
 
-## População alvo vs População de pesquisa
-
 ## Plano amostral
 
-- **Objetivo de Estudo**: Analisar o número de artigos completos publicados em periódicos utilizando estimadores estatísticos;
-- **População alvo**: Professores do dep. de estatística da UFRGS no semestre 2024/01;
+- **Objetivo de Estudo**: Analisar o número médio de artigos completos publicados em periódicos utilizando estimadores estatísticos;
+- **População Pesquisa**: Professores do departamento de estatística da UFRGS no semestre 2024/01;
 - **Coleta de dados**: Os dados são públicos e foram coletados pelo grupo através do Currículo Lattes de cada professor.
 
 ## Estimando parâmetros {background-color="#FFFAFA".scrollable}
-### Valores populacionais
+### Valores da população de pesquisa
 
 ```{r pop_param, include = FALSE}
 N         <- nrow(df)
