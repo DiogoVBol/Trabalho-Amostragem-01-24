@@ -24,3 +24,7 @@
 .reveal .slides section:not(:first-of-type) h2 {
   color: #8B1A1A !important;
 }
+
+.small-text {
+  font-size: 70%;
+}
