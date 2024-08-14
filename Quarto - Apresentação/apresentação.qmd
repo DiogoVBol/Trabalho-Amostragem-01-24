@@ -150,21 +150,6 @@ mean(df$quant_artigos) # 28.10345
 var(df$quant_artigos)*(N-1)/N # 805.2652
 sd(df$quant_artigos) # 28.87948
 ```
-``` {r, Estimacao Parametro2, echo = FALSE}
-set.seed(338357)
-# Cria amostra sem reposição das linhas do dataframe, e então cria um dataframe da amostra
-aass_amostra <- sample(x = seq_len(nrow(df)), size = n, replace = FALSE)
-df_amostra <- df[aass_amostra, ]
-df_amostra$N <- N
-
-# Criando plano amostral a partir do survey
-plano_aass <- svydesign(
-  ids = ~ 1,
-  fpc = ~N,
-  data = df_amostra
-
-)
-```
 - Estimador da média
 ```{r, Estimacao Parametro3, echo = TRUE}
 # Estimativa da Média
