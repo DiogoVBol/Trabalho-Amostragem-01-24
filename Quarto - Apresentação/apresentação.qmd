@@ -45,10 +45,10 @@ v_artigos <- db$quant_artigos
 
 ## Resumo dos dados
 
-- **Banco de Dados:** Fora coletado o número de "artigos completos publicados em periódicos" de cada professor de estatística da UFRGS 2024/02.
-As informações estão disponíveis no site do [IME da UFRGS]("https://www.ufrgs.br/ime/professores/professores-de-estatistica/") e nos respectivos [currículo Lattes]("https://lattes.cnpq.br/") dos docentes.
+- **Banco de Dados:** Foi coletado o número de "artigos completos publicados em periódicos" de cada professor de estatística da UFRGS 2024/02.
+As informações estão disponíveis no site do [IME da UFRGS]("https://www.ufrgs.br/ime/professores/professores-de-estatistica/") e nos respectivos [currículos Lattes]("https://lattes.cnpq.br/") dos docentes.
 
-- **Observação:** A data de atualização dos currículos varia de acordo com cada professor o que pode nos trazes resultados subestimados.
+- **Observação:** A data de atualização dos currículos varia de acordo com cada professor o que pode nos trazer resultados subestimados.
 
 ## População Alvo vs População de Pesquisa
 
@@ -129,9 +129,40 @@ ggplot(db, aes(x = quant_artigos)) +
 
 ```
 
+## Boxplot
+
+<div style="display: flex; align-items: center;">
+<div style="flex: 1; padding-right: 5px;">
+
+```{r, warning=FALSE, fig.height= 5, fig.width= 5}
+
+p = ggplot() +
+  geom_boxplot(data = db,
+               aes(y = quant_artigos, fill = "tomato"),
+               outlier.size = 2.5,
+               width = 0.1) +
+  scale_x_continuous(limits = c(-0.3,0.3)) +
+  ylab("Número de Artigos") + 
+  theme_classic() + 
+  theme(axis.title.y = element_text(size = 30),
+        axis.text.y = element_text(size = 25), 
+        axis.text.x = element_blank(),
+        axis.ticks.x =element_blank(),
+        legend.position = "none")
+
+plot(p)
+```
+
+</div>
+<div style="flex: 1;">
+- Podemos ver que a distribuição de nossa população possui uma assimetria à direita e alguns valores atípicos (outliers).
+- A média é muito sensível a presença de valores atípicos. Portanto, podemos esperar uma variância alta.
+</div>
+</div>
+
 ## Plano amostral
 
-- **Objetivo de Estudo**: Analisar o número médio de artigos completos publicados em periódicos utilizando estimadores estatísticos;
+- **Objetivo de Estudo**: Analisar o número médio de artigos completos publicados em periódicos utilizando estimadores;
 - **População Pesquisa**: Professores do departamento de estatística da UFRGS no semestre 2024/01;
 - **Coleta de dados**: Os dados são públicos e foram coletados pelo grupo através do Currículo Lattes de cada professor.
 
