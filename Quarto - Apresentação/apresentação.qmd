@@ -29,13 +29,17 @@ library(knitr)
 library(kableExtra)
 library(survey)
 library(presize)
+library(RcppAlgos)
+
+set.seed(12345)
 ```
 
 ```{r data, include=FALSE}
 
-df <- read_excel("../data/artigos.xlsx")
-
-sd(df$quant_artigos)
+db        <- read_excel("../data/artigos.xlsx")
+# Alocando em vetores para facilitar a leitura
+v_nomes   <- db$nome
+v_artigos <- db$quant_artigos
 ```
 
 ## Resumo dos dados
@@ -60,7 +64,7 @@ As informações estão disponíveis no site do [IME da UFRGS]("https://www.ufrg
 Primeiras 10 observações da tabela:
 ```{r table_head}
 
-knitr::kable(head(df, 10),
+knitr::kable(head(db, 10),
   col.names = c("Nome", "Quant. Artigos"),
   align = "lr"
 ) %>%
@@ -78,7 +82,7 @@ im_suzi     <- readPNG("img/foto_suzi.png")
 im_patricia <- readPNG("img/foto_patricia.png")
 im_alvaro   <- readPNG("img/foto_alvaro.png")
 
-ggplot(df, aes(x = quant_artigos)) +
+ggplot(db, aes(x = quant_artigos)) +
   geom_histogram(binwidth = 8, fill = "tomato", color = "black", size = 0.8) +
   geom_curve(aes(
       x = 120, y = 1,
@@ -134,14 +138,14 @@ ggplot(df, aes(x = quant_artigos)) +
 ### Valores da população de pesquisa
 
 ```{r pop_param, include = FALSE}
-N         <- nrow(df)
-media_pop <- mean(df$quant_artigos)
-var_pop   <- var(df$quant_artigos)*(N-1)/N
+N         <- nrow(db)
+media_pop <- mean(v_artigos)
+var_pop   <- var(v_artigos)*(N-1)/N
 ```
 
 ::: columns
 ::: {.column width="37%"}
-  $\mu$  = `r media_pop`
+$\mu$  = `r media_pop`
 :::
 
 ::: {.column width="63%"}
@@ -149,68 +153,114 @@ $\sigma^2$ = `r var_pop`
 :::
 :::
 
-``` {r, Estimacao Parametro2, echo = FALSE}
+``` {r estimadores, include = FALSE}
+
 n         <- 10
-total_pop <- N*mean(df$quant_artigos)
-
-set.seed(338357)
-# Cria amostra sem reposição das linhas do dataframe, e então cria um dataframe da amostra
-aass_amostra <- sample(x = seq_len(nrow(df)), size = n, replace = FALSE)
-df_amostra <- df[aass_amostra, ]
-df_amostra$N <- N
-
-# Criando plano amostral a partir do survey
-plano_aass <- svydesign(
-  ids = ~ 1,
-  fpc = ~N,
-  data = df_amostra
-)
+total_pop <- N*mean(v_artigos)
 ```
 
 ::: {.panel-tabset}
 
 ### Estimador da média
+<span class="small-text"> Utilizando AASs, consideremos n = 10 \n</span>
+$$
+\bar X = \frac{1}{n} \sum_{i=1}^{n} X_i
+$$
+
+<span class="small-text"> Sendo $\bar X$ não viessado temos que E($\bar X$) = $\mu$ </span>
+
+```{r var_barX, include = FALSE}
+
+comb_amost      <- comboGeneral(v_artigos, n)
+comb_amost_mean <- apply(comb_amost, 2, mean)
+var_barX        <- var(comb_amost_mean)
+mean_barX       <- mean(comb_amost_mean)
+```
+
+::: columns
+::: {.column width="37%"}
+<span class="small-text"> E($\bar X$) = `r mean_barX` </span>
+
+:::
+
+::: {.column width="63%"}
+<span class="small-text">Var($\bar X$) = `r var_barX` </span>
+
+:::
+:::
+
+<span class="small-text"> Distribuição amostral de $\bar X$: </span>
+
+
+```{r hist_barX, echo = FALSE}
+
+hist(comb_amost_mean, main = "histograma de médias amostrais (n = 10)", xlab = "Médias", ylab = "Frequência")
+```
+
+```{r p_elem_amostra, include = FALSE}
+
+prob_elem_amostra <- n / N
+```
+
+<span class="small-text"> A probabilidade de um elemento específico estar na amostra é de `r prob_elem_amostra` </span>
+
+```{r erro_barX, include = FALSE}
+
+ep_barX <- sqrt(var_pop / (n)) * sqrt((N - n)/(N - 1))
+```
+
+<span class="small-text"> EP($\bar X$) = $\frac{\sigma}{\sqrt{n}} \times \sqrt{\frac{N-n}{N-1}}$ = `r ep_barX` </span>
 
 ```{r, est_media, echo = TRUE}
 
+df <- data.frame(
+    amostra = sample(v_artigos, n),
+    N = N
+)
+
+plano_aass <- svydesign(
+    ids = ~ 1,
+    data = df
+)
+
 svymean(
-  x = ~ quant_artigos,
-  design = plano_aass
+    x = ~ amostra,
+    design = plano_aass
 )
 ```
 
 ### Estimador da Variância
 ```{r, est_var, echo = TRUE}
 
-svyvar(
-  x = ~quant_artigos,
-  design = plano_aass
-)
+# svyvar(
+#   x = ~quant_artigos,
+#   design = plano_aass
+# )
 ```
 
 :::
 
 ## Estimando tamanho de amostra para estudo futuro
 ```{r, cálculo tamanho de amostra, echo = TRUE}
-# Coletando uma amostra de tamanho 10 para obter informações sobre o desvio padrão populacional
-aass_amostra_2 <- sample(x = seq_len(nrow(df)), size = 10, replace = FALSE)
+# # Coletando uma amostra de tamanho 10 para obter informações sobre o desvio padrão populacional
+# aass_amostra_2 <- sample(x = seq_len(nrow(df)), size = 10, replace = FALSE)
 
 
-# Fixando uma margem de erro de 5 de trabalhos publicados para mais ou para menos
-margem_erro=5
-desvio_padrao=sd(aass_amostra_2)
-alpha=.03
-n=10
-n_por_t2=0
-s2_por_e2=1
+# # Fixando uma margem de erro de 5 de trabalhos publicados para mais ou para menos
+# margem_erro=5
+# desvio_padrao=sd(aass_amostra_2)
+# alpha=.03
+# n=10
+# n_por_t2=0
+# s2_por_e2=1
 
-while (n_por_t2 < s2_por_e2){
-  tcalc=abs(qt(p = alpha/2, df = n - 1))
-  n_por_t2 = n/((tcalc)^2)
-  s2_por_e2 = (desvio_padrao^2)/(margem_erro^2)
-  n=n+1
-}
-print(paste("Tamanho de amostra estimado: n =",n))
+# while (n_por_t2 < s2_por_e2){
+#   tcalc=abs(qt(p = alpha/2, df = n - 1))
+#   n_por_t2 = n/((tcalc)^2)
+#   s2_por_e2 = (desvio_padrao^2)/(margem_erro^2)
+#   n=n+1
+# }
+# print(paste("Tamanho de amostra estimado: n =",n))
 
 ```
 
