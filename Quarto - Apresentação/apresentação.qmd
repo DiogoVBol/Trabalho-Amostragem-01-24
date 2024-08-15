@@ -243,24 +243,24 @@ svymean(
 ## Estimando tamanho de amostra para estudo futuro
 ```{r, cálculo tamanho de amostra, echo = TRUE}
 # # Coletando uma amostra de tamanho 10 para obter informações sobre o desvio padrão populacional
-# aass_amostra_2 <- sample(x = seq_len(nrow(df)), size = 10, replace = FALSE)
+aass_amostra_2 <- sample(x = seq_len(nrow(df)), size = 10, replace = FALSE)
 
 
-# # Fixando uma margem de erro de 5 de trabalhos publicados para mais ou para menos
-# margem_erro=5
-# desvio_padrao=sd(aass_amostra_2)
-# alpha=.03
-# n=10
-# n_por_t2=0
-# s2_por_e2=1
+# # Fixando uma margem de erro de 4 de trabalhos publicados para mais ou para menos
+margem_erro=4
+desvio_padrao=sd(aass_amostra_2)
+alpha=.1
+n=10
+n_por_t2=0
+s2_por_e2=1
 
-# while (n_por_t2 < s2_por_e2){
-#   tcalc=abs(qt(p = alpha/2, df = n - 1))
-#   n_por_t2 = n/((tcalc)^2)
-#   s2_por_e2 = (desvio_padrao^2)/(margem_erro^2)
-#   n=n+1
-# }
-# print(paste("Tamanho de amostra estimado: n =",n))
+while (n_por_t2 < s2_por_e2){
+tcalc=abs(qt(p = alpha/2, df = n - 1))
+n_por_t2 = n/((tcalc)^2)
+s2_por_e2 = (desvio_padrao^2)/(margem_erro^2)
+n=n+1
+}
 
+print(paste("Tamanho de amostra estimado: n =",n))
 ```
 
