@@ -122,9 +122,9 @@ ggplot(db, aes(x = quant_artigos)) +
         panel.background = element_rect(fill = NA),
         plot.title = element_text(size = 30, hjust = 0.5),
         plot.subtitle = element_text(size = 20, hjust = 0.5,lineheight = 0.5),
-        axis.text = element_text(size = 15),
-        axis.title.x = element_text( size = 20),
-        axis.title.y = element_text( size = 20))
+        axis.text = element_text(size = 20),
+        axis.title.x = element_text( size = 21),
+        axis.title.y = element_text( size = 21))
 
 ```
 
@@ -194,7 +194,19 @@ mean_barX       <- mean(comb_amost_mean)
 
 ```{r hist_barX, echo = FALSE}
 
-hist(comb_amost_mean, main = "histograma de médias amostrais (n = 10)", xlab = "Médias", ylab = "Frequência")
+ggplot(data.frame(comb_amost_mean), aes(x = comb_amost_mean)) +
+  geom_histogram(binwidth = 8, fill = "tomato", color = "black", size = 0.8) +
+  labs(title = 'Histograma das médias amostrais', x = 'Médias', y = 'Frequência') +
+  theme(panel.grid = element_blank(),
+        panel.grid.minor = element_blank(),
+        plot.background = element_rect(fill = NA),
+        panel.background = element_rect(fill = NA),
+        plot.title = element_text(size = 30, hjust = 0.5),
+        plot.subtitle = element_text(size = 20, hjust = 0.5,lineheight = 0.5),
+        axis.text = element_text(size = 20),
+        axis.title.x = element_text( size = 21),
+        axis.title.y = element_text( size = 21))
+
 ```
 
 ```{r p_elem_amostra, include = FALSE}
@@ -202,7 +214,8 @@ hist(comb_amost_mean, main = "histograma de médias amostrais (n = 10)", xlab = 
 prob_elem_amostra <- n / N
 ```
 
-<span class="small-text"> A probabilidade de um elemento específico estar na amostra é de `r prob_elem_amostra` </span>
+<span class="small-text"> A probabilidade de um elemento específico estar na amostra é de `r prob_elem_amostra` <BR><BR>
+Calculando o Erro Padrão de $\bar X$: </span>
 
 ```{r erro_barX, include = FALSE}
 
@@ -227,15 +240,6 @@ svymean(
     x = ~ amostra,
     design = plano_aass
 )
-```
-
-### Estimador da Variância
-```{r, est_var, echo = TRUE}
-
-# svyvar(
-#   x = ~quant_artigos,
-#   design = plano_aass
-# )
 ```
 
 :::
