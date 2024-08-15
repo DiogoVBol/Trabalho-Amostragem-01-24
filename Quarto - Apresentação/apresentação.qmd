@@ -155,7 +155,7 @@ plot(p)
 
 </div>
 <div style="flex: 1;">
-- Podemos ver que a distribuição de nossa população possui uma assimetria à direita e alguns valores atípicos (outliers).
+- Podemos ver que a distribuição de nossa população de pesquisa possui uma assimetria à direita e alguns valores atípicos (outliers).
 - A média é muito sensível a presença de valores atípicos. Portanto, podemos esperar uma variância alta.
 </div>
 </div>
@@ -231,8 +231,8 @@ ggplot(data.frame(comb_amost_mean), aes(x = comb_amost_mean)) +
   labs(title = 'Histograma das médias amostrais', x = 'Médias', y = 'Frequência') +
   theme(panel.grid = element_blank(),
         panel.grid.minor = element_blank(),
-        plot.background = element_rect(fill = NA),
-        panel.background = element_rect(fill = NA),
+        plot.background = element_rect(fill = '#FFFAFA'),
+        panel.background = element_rect(fill = '#FFFAFA'),
         plot.title = element_text(size = 30, hjust = 0.5),
         plot.subtitle = element_text(size = 20, hjust = 0.5,lineheight = 0.5),
         axis.text = element_text(size = 20),
@@ -288,22 +288,22 @@ media_verdadeira <- mean(db$quant_artigos)
 amostras <- replicate(14, sample(db$quant_artigos, 10, replace = FALSE))
 medias <- apply(amostras, 2, mean)
 sds <- apply(amostras, 2, sd)
-ic_lower <- medias - qt(0.95, df = 9) * sds / sqrt(10)
-ic_upper <- medias + qt(0.95, df = 9) * sds / sqrt(10)
+lim_inf <- medias - qt(0.90, df = 9) * sds / sqrt(10)
+lim_sup <- medias + qt(0.90, df = 9) * sds / sqrt(10)
 
 
 df_plot <- data.frame(
   Amostra = factor(1:14),
   Media = medias,
-  IC_Lower = ic_lower,
-  IC_Upper = ic_upper
+  IC_Lower = lim_inf,
+  IC_Upper = lim_sup
 )
 
 aass_amostra_2 <- sample(x = seq_len(nrow(db)), size = 10, replace = FALSE)
 media_amostra_2 <- mean(db$quant_artigos[aass_amostra_2])
 sd_amostra_2 <- sd(db$quant_artigos[aass_amostra_2])
-ic_lower_amostra_2 <- media_amostra_2 - qt(0.95, df = 9) * sd_amostra_2 / sqrt(10)
-ic_upper_amostra_2 <- media_amostra_2 + qt(0.95, df = 9) * sd_amostra_2 / sqrt(10)
+ic_lower_amostra_2 <- media_amostra_2 - qt(0.90, df = 9) * sd_amostra_2 / sqrt(10)
+ic_upper_amostra_2 <- media_amostra_2 + qt(0.90, df = 9) * sd_amostra_2 / sqrt(10)
 
 # Adicionar amostra específica ao dataframe
 df_plot <- rbind(df_plot, data.frame(
@@ -317,33 +317,72 @@ df_plot <- rbind(df_plot, data.frame(
 x_limits <- c(0, 65)
 
 p1 <- ggplot(db, aes(x = quant_artigos)) +
-  geom_histogram(aes(y = ..density..), fill = "tomato", color = "black", size = 0.5, bins = 50) +
-  geom_vline(xintercept = media_verdadeira, linetype = "dashed", color = "red", size = 1) +
+  geom_histogram(aes(y = ..density..), 
+                 fill = "tomato", 
+                 color = "black", 
+                 size = 0.5, 
+                 bins = 50) +
+  geom_vline(xintercept = media_verdadeira, 
+             linetype = "dashed", 
+             color = "red", 
+             size = 1) +
   theme_minimal() +
-  labs(x = NULL, y = NULL) +
+  labs(x = NULL, 
+       y = NULL) +
   coord_cartesian(xlim = x_limits) +
   theme(panel.grid = element_blank(),
         axis.text.y = element_blank(),
         axis.text.x = element_blank()) +
-  annotate("text", x = 40, y = 0.058, label = "Média população\nde Pesquisa: 28.10", size = 8, color = "black", lineheight = 0.5) +
-  annotate("curve", x = 36, xend = media_verdadeira+0.5, y = 0.045, yend = 0.03, 
+  annotate("text", 
+           x = 40, 
+           y = 0.058, 
+           label = "Média população\nde Pesquisa: 28.10", 
+           size = 8, color = "black", 
+           lineheight = 0.5) +
+  annotate("text", 
+           x = 60, 
+           y = 0.058, 
+           label = "Nível de confiança\nutilizado: 90%", 
+           size = 9, 
+           color = "black", 
+           lineheight = 0.5, 
+           fontface = "bold") +
+  annotate("curve", x = 36, 
+           xend = media_verdadeira+0.5, 
+           y = 0.045, 
+           yend = 0.03, 
            curvature = -0.2, 
            arrow = arrow(type = "closed", length = unit(0.09, "inches")), 
            color = "black") 
 
 p2 <- ggplot(df_plot, aes(x = Amostra, y = Media)) +
-  geom_point(size = 3, color = ifelse(df_plot$Amostra == "Amostra Específica", "blue", "black")) +
-  geom_errorbar(aes(ymin = IC_Lower, ymax = IC_Upper), width = 0.2, color = ifelse(df_plot$Amostra == "Amostra Específica", "blue", "black")) +
-  geom_hline(yintercept = media_verdadeira, linetype = "dashed", color = "red", size = 1) +
+  geom_point(size = 3, 
+             color = ifelse(df_plot$Amostra == "Amostra Específica", "blue", "black")) +
+  geom_errorbar(aes(ymin = IC_Lower, ymax = IC_Upper), 
+                width = 0.2, 
+                color = ifelse(df_plot$Amostra == "Amostra Específica", "blue", "black")) +
+  geom_hline(yintercept = media_verdadeira, 
+             linetype = "dashed", 
+             color = "red", 
+             size = 1) +
   coord_flip() +
   scale_y_continuous(limits = x_limits) +
-  labs(x = NULL, y = NULL) +
+  labs(x = NULL, 
+       y = NULL) +
   theme_minimal() +
   theme(panel.grid = element_blank(),
         axis.text.y = element_blank(),
         axis.text.x = element_blank()) +
-  annotate("text", x = 14, y = 54, label = "Nossa amostra tem\nMédia de 16.1", size = 8, color = "black", lineheight = 0.5) +
-  annotate("curve", x = 14, xend = 15, y = 49, yend = 38, 
+  annotate("text", x = 14, 
+           y = 54, 
+           label = "Nossa amostra tem\nMédia de 16.1", 
+           size = 8, 
+           color = "black", 
+           lineheight = 0.5) +
+  annotate("curve", x = 14, 
+           xend = 15, 
+           y = 49, 
+           yend = 34, 
            curvature = 0.2, 
            arrow = arrow(type = "closed", length = unit(0.09, "inches")), 
            color = "black")
