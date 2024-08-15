@@ -30,6 +30,7 @@ library(kableExtra)
 library(survey)
 library(presize)
 library(RcppAlgos)
+library(gridExtra)
 
 set.seed(12345)
 ```
@@ -244,11 +245,87 @@ svymean(
 
 :::
 
+## Intervalos para diferentes amostras!
+
+```{r, visualização, warning=FALSE}
+set.seed(12345)
+
+showtext_auto()
+
+media_verdadeira <- mean(db$quant_artigos)
+
+amostras <- replicate(14, sample(db$quant_artigos, 10, replace = FALSE))
+medias <- apply(amostras, 2, mean)
+sds <- apply(amostras, 2, sd)
+ic_lower <- medias - qt(0.95, df = 9) * sds / sqrt(10)
+ic_upper <- medias + qt(0.95, df = 9) * sds / sqrt(10)
+
+
+df_plot <- data.frame(
+  Amostra = factor(1:14),
+  Media = medias,
+  IC_Lower = ic_lower,
+  IC_Upper = ic_upper
+)
+
+aass_amostra_2 <- sample(x = seq_len(nrow(db)), size = 10, replace = FALSE)
+media_amostra_2 <- mean(db$quant_artigos[aass_amostra_2])
+sd_amostra_2 <- sd(db$quant_artigos[aass_amostra_2])
+ic_lower_amostra_2 <- media_amostra_2 - qt(0.95, df = 9) * sd_amostra_2 / sqrt(10)
+ic_upper_amostra_2 <- media_amostra_2 + qt(0.95, df = 9) * sd_amostra_2 / sqrt(10)
+
+# Adicionar amostra específica ao dataframe
+df_plot <- rbind(df_plot, data.frame(
+  Amostra = "Amostra Específica",
+  Media = media_amostra_2,
+  IC_Lower = ic_lower_amostra_2,
+  IC_Upper = ic_upper_amostra_2
+))
+
+
+x_limits <- c(0, 65)
+
+p1 <- ggplot(db, aes(x = quant_artigos)) +
+  geom_histogram(aes(y = ..density..), fill = "tomato", color = "black", size = 0.5, bins = 50) +
+  geom_vline(xintercept = media_verdadeira, linetype = "dashed", color = "red", size = 1) +
+  theme_minimal() +
+  labs(x = NULL, y = NULL) +
+  coord_cartesian(xlim = x_limits) +
+  theme(panel.grid = element_blank(),
+        axis.text.y = element_blank(),
+        axis.text.x = element_blank()) +
+  annotate("text", x = 40, y = 0.058, label = "Média população\nde Pesquisa: 28.10", size = 8, color = "black", lineheight = 0.5) +
+  annotate("curve", x = 36, xend = media_verdadeira+0.5, y = 0.045, yend = 0.03, 
+           curvature = -0.2, 
+           arrow = arrow(type = "closed", length = unit(0.09, "inches")), 
+           color = "black") 
+
+p2 <- ggplot(df_plot, aes(x = Amostra, y = Media)) +
+  geom_point(size = 3, color = ifelse(df_plot$Amostra == "Amostra Específica", "blue", "black")) +
+  geom_errorbar(aes(ymin = IC_Lower, ymax = IC_Upper), width = 0.2, color = ifelse(df_plot$Amostra == "Amostra Específica", "blue", "black")) +
+  geom_hline(yintercept = media_verdadeira, linetype = "dashed", color = "red", size = 1) +
+  coord_flip() +
+  scale_y_continuous(limits = x_limits) +
+  labs(x = NULL, y = NULL) +
+  theme_minimal() +
+  theme(panel.grid = element_blank(),
+        axis.text.y = element_blank(),
+        axis.text.x = element_blank()) +
+  annotate("text", x = 14, y = 54, label = "Nossa amostra tem\nMédia de 16.1", size = 8, color = "black", lineheight = 0.5) +
+  annotate("curve", x = 14, xend = 15, y = 49, yend = 38, 
+           curvature = 0.2, 
+           arrow = arrow(type = "closed", length = unit(0.09, "inches")), 
+           color = "black")
+
+grid.arrange(p1, p2, ncol = 1, heights = c(1, 2))
+
+```
+
 ## Estimando tamanho de amostra para estudo futuro
 ```{r, cálculo tamanho de amostra, echo = TRUE}
+set.seed(12345)
 # # Coletando uma amostra de tamanho 10 para obter informações sobre o desvio padrão populacional
 aass_amostra_2 <- sample(x = seq_len(nrow(df)), size = 10, replace = FALSE)
-
 
 # # Fixando uma margem de erro de 4 de trabalhos publicados para mais ou para menos
 margem_erro=4
