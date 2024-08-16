@@ -30,6 +30,7 @@ library(kableExtra)
 library(survey)
 library(presize)
 library(RcppAlgos)
+library(gridExtra)
 
 set.seed(12345)
 ```
@@ -44,10 +45,10 @@ v_artigos <- db$quant_artigos
 
 ## Resumo dos dados
 
-- **Banco de Dados:** Fora coletado o número de "artigos completos publicados em periódicos" de cada professor de estatística da UFRGS 2024/02.
-As informações estão disponíveis no site do [IME da UFRGS]("https://www.ufrgs.br/ime/professores/professores-de-estatistica/") e nos respectivos [currículo Lattes]("https://lattes.cnpq.br/") dos docentes.
+- **Banco de Dados:** Foi coletado o número de "artigos completos publicados em periódicos" de cada professor de estatística da UFRGS 2024/02.
+As informações estão disponíveis no site do [IME da UFRGS]("https://www.ufrgs.br/ime/professores/professores-de-estatistica/") e nos respectivos [currículos Lattes]("https://lattes.cnpq.br/") dos docentes.
 
-- **Observação:** A data de atualização dos currículos varia de acordo com cada professor o que pode nos trazes resultados subestimados.
+- **Observação:** A data de atualização dos currículos varia de acordo com cada professor o que pode nos trazer resultados subestimados.
 
 ## População Alvo vs População de Pesquisa
 
@@ -128,9 +129,40 @@ ggplot(db, aes(x = quant_artigos)) +
 
 ```
 
+## Boxplot
+
+<div style="display: flex; align-items: center;">
+<div style="flex: 1; padding-right: 5px;">
+
+```{r, warning=FALSE, fig.height= 5, fig.width= 5}
+
+p = ggplot() +
+  geom_boxplot(data = db,
+               aes(y = quant_artigos, fill = "tomato"),
+               outlier.size = 2.5,
+               width = 0.1) +
+  scale_x_continuous(limits = c(-0.3,0.3)) +
+  ylab("Número de Artigos") + 
+  theme_classic() + 
+  theme(axis.title.y = element_text(size = 30),
+        axis.text.y = element_text(size = 25), 
+        axis.text.x = element_blank(),
+        axis.ticks.x =element_blank(),
+        legend.position = "none")
+
+plot(p)
+```
+
+</div>
+<div style="flex: 1;">
+- Podemos ver que a distribuição de nossa população de pesquisa possui uma assimetria à direita e alguns valores atípicos (outliers).
+- A média é muito sensível a presença de valores atípicos. Portanto, podemos esperar uma variância alta.
+</div>
+</div>
+
 ## Plano amostral
 
-- **Objetivo de Estudo**: Analisar o número médio de artigos completos publicados em periódicos utilizando estimadores estatísticos;
+- **Objetivo de Estudo**: Analisar o número médio de artigos completos publicados em periódicos utilizando estimadores;
 - **População Pesquisa**: Professores do departamento de estatística da UFRGS no semestre 2024/01;
 - **Coleta de dados**: Os dados são públicos e foram coletados pelo grupo através do Currículo Lattes de cada professor.
 
@@ -199,8 +231,8 @@ ggplot(data.frame(comb_amost_mean), aes(x = comb_amost_mean)) +
   labs(title = 'Histograma das médias amostrais', x = 'Médias', y = 'Frequência') +
   theme(panel.grid = element_blank(),
         panel.grid.minor = element_blank(),
-        plot.background = element_rect(fill = NA),
-        panel.background = element_rect(fill = NA),
+        plot.background = element_rect(fill = '#FFFAFA'),
+        panel.background = element_rect(fill = '#FFFAFA'),
         plot.title = element_text(size = 30, hjust = 0.5),
         plot.subtitle = element_text(size = 20, hjust = 0.5,lineheight = 0.5),
         axis.text = element_text(size = 20),
@@ -244,11 +276,126 @@ svymean(
 
 :::
 
+## Intervalos para diferentes amostras!
+
+```{r, visualização, warning=FALSE}
+set.seed(12345)
+
+showtext_auto()
+
+media_verdadeira <- mean(db$quant_artigos)
+
+amostras <- replicate(14, sample(db$quant_artigos, 10, replace = FALSE))
+medias <- apply(amostras, 2, mean)
+sds <- apply(amostras, 2, sd)
+lim_inf <- medias - qt(0.90, df = 9) * sds / sqrt(10)
+lim_sup <- medias + qt(0.90, df = 9) * sds / sqrt(10)
+
+
+df_plot <- data.frame(
+  Amostra = factor(1:14),
+  Media = medias,
+  IC_Lower = lim_inf,
+  IC_Upper = lim_sup
+)
+
+aass_amostra_2 <- sample(x = seq_len(nrow(db)), size = 10, replace = FALSE)
+media_amostra_2 <- mean(db$quant_artigos[aass_amostra_2])
+sd_amostra_2 <- sd(db$quant_artigos[aass_amostra_2])
+ic_lower_amostra_2 <- media_amostra_2 - qt(0.90, df = 9) * sd_amostra_2 / sqrt(10)
+ic_upper_amostra_2 <- media_amostra_2 + qt(0.90, df = 9) * sd_amostra_2 / sqrt(10)
+
+# Adicionar amostra específica ao dataframe
+df_plot <- rbind(df_plot, data.frame(
+  Amostra = "Amostra Específica",
+  Media = media_amostra_2,
+  IC_Lower = ic_lower_amostra_2,
+  IC_Upper = ic_upper_amostra_2
+))
+
+
+x_limits <- c(0, 65)
+
+p1 <- ggplot(db, aes(x = quant_artigos)) +
+  geom_histogram(aes(y = ..density..), 
+                 fill = "tomato", 
+                 color = "black", 
+                 size = 0.5, 
+                 bins = 50) +
+  geom_vline(xintercept = media_verdadeira, 
+             linetype = "dashed", 
+             color = "red", 
+             size = 1) +
+  theme_minimal() +
+  labs(x = NULL, 
+       y = NULL) +
+  coord_cartesian(xlim = x_limits) +
+  theme(panel.grid = element_blank(),
+        axis.text.y = element_blank(),
+        axis.text.x = element_blank()) +
+  annotate("text", 
+           x = 40, 
+           y = 0.058, 
+           label = "Média população\nde Pesquisa: 28.10", 
+           size = 8, color = "black", 
+           lineheight = 0.5) +
+  annotate("text", 
+           x = 60, 
+           y = 0.058, 
+           label = "Nível de confiança\nutilizado: 90%", 
+           size = 9, 
+           color = "black", 
+           lineheight = 0.5, 
+           fontface = "bold") +
+  annotate("curve", x = 36, 
+           xend = media_verdadeira+0.5, 
+           y = 0.045, 
+           yend = 0.03, 
+           curvature = -0.2, 
+           arrow = arrow(type = "closed", length = unit(0.09, "inches")), 
+           color = "black") 
+
+p2 <- ggplot(df_plot, aes(x = Amostra, y = Media)) +
+  geom_point(size = 3, 
+             color = ifelse(df_plot$Amostra == "Amostra Específica", "blue", "black")) +
+  geom_errorbar(aes(ymin = IC_Lower, ymax = IC_Upper), 
+                width = 0.2, 
+                color = ifelse(df_plot$Amostra == "Amostra Específica", "blue", "black")) +
+  geom_hline(yintercept = media_verdadeira, 
+             linetype = "dashed", 
+             color = "red", 
+             size = 1) +
+  coord_flip() +
+  scale_y_continuous(limits = x_limits) +
+  labs(x = NULL, 
+       y = NULL) +
+  theme_minimal() +
+  theme(panel.grid = element_blank(),
+        axis.text.y = element_blank(),
+        axis.text.x = element_blank()) +
+  annotate("text", x = 14, 
+           y = 54, 
+           label = "Nossa amostra tem\nMédia de 16.1", 
+           size = 8, 
+           color = "black", 
+           lineheight = 0.5) +
+  annotate("curve", x = 14, 
+           xend = 15, 
+           y = 49, 
+           yend = 34, 
+           curvature = 0.2, 
+           arrow = arrow(type = "closed", length = unit(0.09, "inches")), 
+           color = "black")
+
+grid.arrange(p1, p2, ncol = 1, heights = c(1, 2))
+
+```
+
 ## Estimando tamanho de amostra para estudo futuro
 ```{r, cálculo tamanho de amostra, echo = TRUE}
+set.seed(12345)
 # # Coletando uma amostra de tamanho 10 para obter informações sobre o desvio padrão populacional
 aass_amostra_2 <- sample(x = seq_len(nrow(df)), size = 10, replace = FALSE)
-
 
 # # Fixando uma margem de erro de 4 de trabalhos publicados para mais ou para menos
 margem_erro=4
