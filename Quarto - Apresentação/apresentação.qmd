@@ -2,7 +2,7 @@
 title: "Trabalho de Amostragem"
 title-slide-attributes:
     id: title-slide
-    data-background-image: background.png
+    data-background-image: img/background.png
     data-background-size: cover
 author: "Diogo, Davi, Gabriel, Giovanni, João"
 format:
@@ -12,7 +12,7 @@ format:
     preview-links: true
     embed-resources: true
     logo: img/logo.png
-    css: lecture.css
+    css: css/lecture.css
     footer: Professor Rogério Boff Borges
     background: "#FFFAFA"
 ---
