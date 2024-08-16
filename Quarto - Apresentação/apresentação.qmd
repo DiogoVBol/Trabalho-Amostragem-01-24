@@ -32,7 +32,7 @@ library(presize)
 library(RcppAlgos)
 library(gridExtra)
 
-set.seed(12345)
+set.seed(1234)
 ```
 
 ```{r data, include=FALSE}
@@ -257,7 +257,6 @@ ep_barX <- sqrt(var_pop / (n)) * sqrt((N - n)/(N - 1))
 <span class="small-text"> EP($\bar X$) = $\frac{\sigma}{\sqrt{n}} \times \sqrt{\frac{N-n}{N-1}}$ = `r ep_barX` </span>
 
 ```{r, est_media, echo = TRUE}
-
 df <- data.frame(
     amostra = sample(v_artigos, n),
     N = N
@@ -375,7 +374,7 @@ p2 <- ggplot(df_plot, aes(x = Amostra, y = Media)) +
         axis.text.x = element_blank()) +
   annotate("text", x = 14,
            y = 54,
-           label = "Nossa amostra tem\nMédia de 16.1",
+           label = "Nossa amostra tem\nMédia de 25.4",
            size = 8,
            color = "black",
            lineheight = 0.5) +
@@ -389,6 +388,77 @@ p2 <- ggplot(df_plot, aes(x = Amostra, y = Media)) +
 
 grid.arrange(p1, p2, ncol = 1, heights = c(1, 2))
 
+```
+
+## Intervalo de confiança para a média!
+
+```{r,ic2, include=FALSE}
+amostra <- svymean(
+    x = ~ amostra,
+    design = plano_aass
+)
+conf_int <- confint(amostra, level = 0.90)
+
+# Renomeia as colunas do intervalo de confiança
+colnames(conf_int) <- c("10%", "90%")
+
+# Mostra o intervalo de confiança com as novas colunas
+conf_int
+```
+
+```{r, ic}
+
+media_verdadeira <- mean(db$quant_artigos)
+
+ggplot(db, aes(x = quant_artigos)) +
+  geom_histogram(binwidth = 8, fill = "tomato", color = "black", size = 0.8) +
+  geom_vline(xintercept = media_verdadeira,
+             linetype = "dashed",
+             color = "red",
+             size = 1) +
+  annotate("segment",
+           x = 15.44, xend = 35.35,
+           y = 11, yend = 11,
+           color = "blue",
+           size = 0.8) +
+  geom_point(aes(x = 25.4, y = 11), color = "blue", size = 2) +
+  annotate("text",
+           x = 70,
+           y = 10,
+           label = "Intervalo de confiança:\n[15.4453, 35.3546]",
+           size = 8, color = "black",
+           lineheight = 0.5) +
+  annotate("text",
+           x = 50,
+           y = 8,
+           label = "Média população\nde Pesquisa: 28.10 artigos",
+           size = 8, color = "black",
+           lineheight = 0.5) +
+  annotate("curve", x = 57,
+           xend = 37,
+           y = 10,
+           yend = 11,
+           curvature = -0.2,
+           arrow = arrow(type = "closed", length = unit(0.09, "inches")),
+           color = "black") +
+  annotate("curve", x = 50,
+           xend = media_verdadeira+2,
+           y = 7.3,
+           yend = 5,
+           curvature = -0.2,
+           arrow = arrow(type = "closed", length = unit(0.09, "inches")),
+           color = "black") +
+  labs(x = 'Quantidade de artigos publicados',
+       y = 'Frequência') +
+  theme(panel.grid = element_blank(),
+        panel.grid.minor = element_blank(),
+        plot.background = element_rect(fill = NA),
+        panel.background = element_rect(fill = NA),
+        plot.title = element_text(size = 30, hjust = 0.5),
+        plot.subtitle = element_text(size = 20, hjust = 0.5,lineheight = 0.5),
+        axis.text = element_text(size = 20),
+        axis.title.x = element_text( size = 21),
+        axis.title.y = element_text( size = 21))
 ```
 
 ## Estimando tamanho de amostra para estudo futuro
