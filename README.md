@@ -11,12 +11,6 @@ A tabela de dados foi construída a partir da coleta de informações disponíve
 Para cada professor listado, acessou-se seu currículo Lattes para verificar a quantidade de artigos completos publicados em periódicos. Com base nessas informações, criou-se um arquivo CSV contendo duas colunas: a primeira com o nome de cada professor e a segunda com o número de artigos publicados.
 '''
 
-*População Alvo:* Todos os professores de estatística da UFRGS
-
-*População de Pesquisa:* Professores em atividade do Departamento de Estatística da UFRGS
-
-*Plano amostral:*
-
 Desenvolvido em conjunto por:
 
 [Davi Augusto](https://github.com/davi-dokasi)
