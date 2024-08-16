@@ -142,10 +142,10 @@ p = ggplot() +
                outlier.size = 2.5,
                width = 0.1) +
   scale_x_continuous(limits = c(-0.3,0.3)) +
-  ylab("Número de Artigos") + 
-  theme_classic() + 
+  ylab("Número de Artigos") +
+  theme_classic() +
   theme(axis.title.y = element_text(size = 30),
-        axis.text.y = element_text(size = 25), 
+        axis.text.y = element_text(size = 25),
         axis.text.x = element_blank(),
         axis.ticks.x =element_blank(),
         legend.position = "none")
@@ -317,74 +317,74 @@ df_plot <- rbind(df_plot, data.frame(
 x_limits <- c(0, 65)
 
 p1 <- ggplot(db, aes(x = quant_artigos)) +
-  geom_histogram(aes(y = ..density..), 
-                 fill = "tomato", 
-                 color = "black", 
-                 size = 0.5, 
+  geom_histogram(aes(y = ..density..),
+                 fill = "tomato",
+                 color = "black",
+                 size = 0.5,
                  bins = 50) +
-  geom_vline(xintercept = media_verdadeira, 
-             linetype = "dashed", 
-             color = "red", 
+  geom_vline(xintercept = media_verdadeira,
+             linetype = "dashed",
+             color = "red",
              size = 1) +
   theme_minimal() +
-  labs(x = NULL, 
+  labs(x = NULL,
        y = NULL) +
   coord_cartesian(xlim = x_limits) +
   theme(panel.grid = element_blank(),
         axis.text.y = element_blank(),
         axis.text.x = element_blank()) +
-  annotate("text", 
-           x = 40, 
-           y = 0.058, 
-           label = "Média população\nde Pesquisa: 28.10", 
-           size = 8, color = "black", 
+  annotate("text",
+           x = 40,
+           y = 0.058,
+           label = "Média população\nde Pesquisa: 28.10",
+           size = 8, color = "black",
            lineheight = 0.5) +
-  annotate("text", 
-           x = 60, 
-           y = 0.058, 
-           label = "Nível de confiança\nutilizado: 90%", 
-           size = 9, 
-           color = "black", 
-           lineheight = 0.5, 
+  annotate("text",
+           x = 60,
+           y = 0.058,
+           label = "Nível de confiança\nutilizado: 90%",
+           size = 9,
+           color = "black",
+           lineheight = 0.5,
            fontface = "bold") +
-  annotate("curve", x = 36, 
-           xend = media_verdadeira+0.5, 
-           y = 0.045, 
-           yend = 0.03, 
-           curvature = -0.2, 
-           arrow = arrow(type = "closed", length = unit(0.09, "inches")), 
-           color = "black") 
+  annotate("curve", x = 36,
+           xend = media_verdadeira+0.5,
+           y = 0.045,
+           yend = 0.03,
+           curvature = -0.2,
+           arrow = arrow(type = "closed", length = unit(0.09, "inches")),
+           color = "black")
 
 p2 <- ggplot(df_plot, aes(x = Amostra, y = Media)) +
-  geom_point(size = 3, 
+  geom_point(size = 3,
              color = ifelse(df_plot$Amostra == "Amostra Específica", "blue", "black")) +
-  geom_errorbar(aes(ymin = IC_Lower, ymax = IC_Upper), 
-                width = 0.2, 
+  geom_errorbar(aes(ymin = IC_Lower, ymax = IC_Upper),
+                width = 0.2,
                 color = ifelse(df_plot$Amostra == "Amostra Específica", "blue", "black")) +
-  geom_hline(yintercept = media_verdadeira, 
-             linetype = "dashed", 
-             color = "red", 
+  geom_hline(yintercept = media_verdadeira,
+             linetype = "dashed",
+             color = "red",
              size = 1) +
   coord_flip() +
   scale_y_continuous(limits = x_limits) +
-  labs(x = NULL, 
+  labs(x = NULL,
        y = NULL) +
   theme_minimal() +
   theme(panel.grid = element_blank(),
         axis.text.y = element_blank(),
         axis.text.x = element_blank()) +
-  annotate("text", x = 14, 
-           y = 54, 
-           label = "Nossa amostra tem\nMédia de 16.1", 
-           size = 8, 
-           color = "black", 
+  annotate("text", x = 14,
+           y = 54,
+           label = "Nossa amostra tem\nMédia de 16.1",
+           size = 8,
+           color = "black",
            lineheight = 0.5) +
-  annotate("curve", x = 14, 
-           xend = 15, 
-           y = 49, 
-           yend = 34, 
-           curvature = 0.2, 
-           arrow = arrow(type = "closed", length = unit(0.09, "inches")), 
+  annotate("curve", x = 14,
+           xend = 15,
+           y = 49,
+           yend = 34,
+           curvature = 0.2,
+           arrow = arrow(type = "closed", length = unit(0.09, "inches")),
            color = "black")
 
 grid.arrange(p1, p2, ncol = 1, heights = c(1, 2))
@@ -394,24 +394,31 @@ grid.arrange(p1, p2, ncol = 1, heights = c(1, 2))
 ## Estimando tamanho de amostra para estudo futuro
 ```{r, cálculo tamanho de amostra, echo = TRUE}
 set.seed(12345)
-# # Coletando uma amostra de tamanho 10 para obter informações sobre o desvio padrão populacional
-aass_amostra_2 <- sample(x = seq_len(nrow(df)), size = 10, replace = FALSE)
 
-# # Fixando uma margem de erro de 4 de trabalhos publicados para mais ou para menos
-margem_erro=4
-desvio_padrao=sd(aass_amostra_2)
-alpha=.1
-n=10
-n_por_t2=0
-s2_por_e2=1
+# Coletando uma amostra de n = 10 para obter informações sobre o
+# desvio padrão populacional
+
+aass_amostra_2 <- sample(x = seq_len(nrow(df)),
+                         size = 10,
+                         replace = FALSE)
+
+# Fixando uma margem de erro de 4 trabalhos publicados
+# para mais ou para menos
+
+margem_erro   <- 4
+desvio_padrao <- sd(aass_amostra_2)
+alpha         <- .1
+n             <- 10
+n_por_t2      <- 0
+s2_por_e2     <- 1
 
 while (n_por_t2 < s2_por_e2){
-tcalc=abs(qt(p = alpha/2, df = n - 1))
-n_por_t2 = n/((tcalc)^2)
-s2_por_e2 = (desvio_padrao^2)/(margem_erro^2)
-n=n+1
+  tcalc     <- abs(qt(p = alpha/2, df = n - 1))
+  n_por_t2  <- n/((tcalc)^2)
+  s2_por_e2 <- (desvio_padrao^2)/(margem_erro^2)
+  n         <- n+1
 }
 
-print(paste("Tamanho de amostra estimado: n =",n))
 ```
 
+<span class="small-text"> Tamanho de amostra estimado: `r n` </span>
