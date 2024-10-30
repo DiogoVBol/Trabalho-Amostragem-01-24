@@ -1,0 +1,124 @@
+
+---
+title: Modelos Lineares
+author:
+output:
+  html_document:
+    toc: true
+    toc_float:
+        collapsed: true
+        smooth_scroll: true
+    toc_depth: 3        
+    code_folding: show
+    theme: flatly
+    code_download: true
+fontsize: 14pt
+---
+
+Autores: João Vitor da Silva Arend - 00577787, Davi Augusto F. da Silva
+
+## Instruções
+### Simulação Monte Carlo dos Betas do Modelo de Regressão
+
+1. Faça uma simulação de tamanho n (25, 50, 100, 500, 1000) do modelo linear $Y= \beta_0 + \beta_1X + \epsilon$
+2. Adicione um outlier nesse banco de dados
+3. Estime os $\beta_0$, $\beta_1$ e $S^2$, calcule as estatísticas de teste e os seus respectivos p-valores
+4. Guarde esses valores
+5. Repita esse esperimento 1000 vezes, isto é, faça uma simulação de monte carlo
+6. Faça um histograma e calcule a média, a variância e a mediana dos itens do passo 3
+7. Qual a sua conclusão?
+8. Entregue o codigo Rmarkdown e o html da tarefa
+
+## Resolução
+
+```{r warning=FALSE, include=FALSE}
+
+library(tidyverse)
+library(dplyr)
+set.seed(30102024)
+```
+
+```{r}
+
+set.seed(1)
+
+nn          <- c(25, 50, 100, 500, 1000)
+monte_carlo <- 1000
+
+simula_modelo <- function(n) {
+  x <- runif(n, -3, 3)
+  epsilon <- rnorm(n, 0, 2)
+  beta_0 <- 3
+  beta_1 <- 4
+  y <- beta_0 + beta_1 * x + epsilon
+
+  # -- Aqui eu meto os outlier... sei que tem uma função chamada outlier mas não me veio na cabeça de aplicar aq
+  x[n] <- 10
+  y[n] <- 100
+  
+  modelo <- lm(y ~ x)
+  modelo_sum <- summary(modelo)
+  
+  list(
+    beta_0 = coef(modelo)[1],
+    beta_1 = coef(modelo)[2],
+    sigma2 = modelo_sum$sigma^2,
+    p_value_beta_0 = modelo_sum$coefficients[1, 4],
+    p_value_beta_1 = modelo_sum$coefficients[2, 4]
+  )
+}
+
+resultados <- lapply(nn, function(n) {
+  replicate(monte_carlo, simula_modelo(n), simplify = FALSE)
+})
+
+
+dfresultados <- do.call(rbind, lapply(seq_along(nn), function(i) {
+  n <- nn[i]
+  do.call(rbind, lapply(resultados[[i]], function(res) {
+    data.frame(
+      n = n,
+      beta_0 = res$beta_0,
+      beta_1 = res$beta_1,
+      sigma2 = res$sigma2,
+      p_value_beta_0 = res$p_value_beta_0,
+      p_value_beta_1 = res$p_value_beta_1
+    )
+  }))
+}))
+
+
+
+# -- Pipeline pica aqui né, pode falar, ficou duro quando viu isso né
+stats <- dfresultados %>%
+  group_by(n) %>%
+  summarise(
+    mean_beta_0 = mean(beta_0),
+    var_beta_0 = var(beta_0),
+    median_beta_0 = median(beta_0),
+    mean_beta_1 = mean(beta_1),
+    var_beta_1 = var(beta_1),
+    median_beta_1 = median(beta_1),
+    var_sigma2 = var(sigma2),
+    median_sigma2 = median(sigma2)
+  )
+
+ggplot(dfresultados, aes(x = beta_0)) +
+    geom_histogram() +
+    geom_vline(aes(xintercept = mean(beta_0)), color = "red", linetype = "dashed") +
+    facet_wrap(~ n, scales = "free") +
+    labs(title = "Histograma de Beta_0", x = "Beta_0", y = "Frequência")
+
+ggplot(dfresultados, aes(x = beta_1)) +
+  geom_histogram() +
+  geom_vline(aes(xintercept = mean(beta_1)), color = "red", linetype = "dashed") +
+  facet_wrap(~ n, scales = "free") +
+  labs(title = "Histograma de Beta_1", x = "Beta_1", y = "Frequência")
+
+ggplot(dfresultados, aes(x = sigma2)) +
+  geom_histogram() +
+  geom_vline(aes(xintercept = mean(sigma2)), color = "red", linetype = "dashed") +
+  facet_wrap(~ n, scales = "free") +
+  labs(title = "Histograma de Sigma^2", x = "Sigma^2", y = "Frequência")
+
+```
